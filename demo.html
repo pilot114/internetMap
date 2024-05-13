@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <script src='https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css' rel='stylesheet' />
+    </head>
+    <body>
+        <div id='map' style='width: 1200px; height: 800px;'></div>
+        <script>
+            let markers = [];
+
+            mapboxgl.accessToken = 'pk.eyJ1IjoicGlsb3QxMTQiLCJhIjoiY2llb2lsNjhyMDBhenRpbTBvZ3didnJzcyJ9.91lZn7DeDvW-lKE5OSk_-A';
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/light-v11',
+                center: [20.457273, 44.787197], // starting position [lng, lat]
+                zoom: 12,
+            });
+
+            map.on('load', function() {
+                fetchData();
+            });
+
+            map.on('moveend', function() {
+                fetchData();
+            });
+
+            function fetchData() {
+                fetch('http://127.0.0.1:8080/api.php?bounds=' + JSON.stringify(map.getBounds()))
+                    .then(response => response.json())
+                    .then(data => {
+
+                        removeAllMarkers();
+
+                        data.items.forEach(item => {
+                            ip = item.ip;
+                            name = item.continent_code + ' / ' + item.country_code;
+                            if (item.city_name) {
+                                name += ' / ' + item.city_name;
+                            }
+                            provider = item.provider_name;
+                            text = ip + "\n" + name + "\n" + provider;
+
+                            popup = new mapboxgl.Popup({ offset: 25 }).setText(text)
+
+                            marker = new mapboxgl.Marker()
+                                .setLngLat([item.lon, item.lat])
+                                .setPopup(popup)
+                                .addTo(map);
+
+                            markers.push(marker);
+                        });
+                    });
+            }
+
+            function removeAllMarkers() {
+                markers.forEach(marker => marker.remove());
+                markers = [];
+            }
+        </script>
+    </body>
+</html>

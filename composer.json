@@ -1,0 +1,9 @@
+{
+    "require": {
+        "ext-pdo": "*",
+        "maxmind-db/reader": "^1.11"
+    },
+    "autoload": {
+        "psr-4": {"InternetMap\\": "src/"}
+    }
+}
