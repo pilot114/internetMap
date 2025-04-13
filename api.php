@@ -3,7 +3,7 @@
 use InternetMap\MmdbLoader;
 use InternetMap\Sqlite;
 
-require '../vendor/autoload.php';
+require './vendor/autoload.php';
 
 $db = new Sqlite('sqlite:internet.db');
 
